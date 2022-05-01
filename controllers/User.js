@@ -1,5 +1,5 @@
 const User = require("../models/user");
-// Load input validation
+
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 const bcrypt = require("bcryptjs");
@@ -24,15 +24,12 @@ module.exports = {
 
       bcrypt.compare(password, user.password).then((isMatch) => {
         if (isMatch) {
-          // User matched
-          // Create JWT Payload
           const payload = {
             id: user.id,
             name: user.name,
             email: user.email,
           };
 
-          // Sign token
           jwt.sign(
             payload,
             config.secretKey,
@@ -53,13 +50,8 @@ module.exports = {
     });
   },
   registerUser: (req, res) => {
-    // Form validation
-
-    console.log(req.body);
-
     const { errors, isValid } = validateRegisterInput(req.body);
 
-    // Check validation
     if (!isValid) {
       return res
         .status(400)
@@ -77,7 +69,6 @@ module.exports = {
             password: req.body.password,
           });
 
-          // Hash password before saving in database
           bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(newUser.password, salt, (err, hash) => {
               if (err) throw err;
